@@ -1,174 +1,46 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#fff8f4">
-<title>TAIPEION｜教研中心三關投票與使用經驗</title>
-<style>
-:root{--ink:#34445c;--muted:#77869b;--pink:#f57da6;--pinkDeep:#d95684;--palePink:#ffe8ef;--mint:#dbf8ea;--green:#168970;--lav:#eee7ff;--violet:#7b65bb;--sky:#e4f4ff;--blue:#3186b3;--yellow:#fff0c2;--cream:#fffaf5;--edge:#ede9ef;--shadow:0 13px 40px rgba(70,80,104,.105)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 7% 5%,#ffe2ee 0,transparent 23%),radial-gradient(circle at 95% 11%,#ddf7f1 0,transparent 28%),radial-gradient(circle at 82% 85%,#ebe5ff 0,transparent 22%),#fffaf4;color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,-apple-system,sans-serif;line-height:1.65}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #73b0e3;outline-offset:3px}button:disabled{cursor:not-allowed}h1,h2,h3,p{margin-top:0}.wrap{width:min(1130px,calc(100% - 30px));margin:0 auto;padding-bottom:43px}
-.topline{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 2px 15px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:900;letter-spacing:.025em}.brand-icon{width:39px;height:39px;background:#ffdfeb;display:grid;place-items:center;border-radius:13px;font-size:22px}.top-meta{display:flex;align-items:center;gap:9px}.tag-soft{background:white;color:#7a8499;padding:8px 13px;border-radius:30px;border:1px solid #eee7e3;font-size:12px;font-weight:800}.top-mini{background:white;border:1px solid #e9e3e9;color:#64718b;border-radius:30px;font-size:12px;font-weight:900;padding:8px 14px}
-.hero{position:relative;overflow:hidden;background:linear-gradient(116deg,#fff9fd,#f9f6ff 53%,#e8f9f0);border:2px solid #fff;border-radius:29px;box-shadow:var(--shadow);padding:31px 40px 31px 39px;min-height:238px;display:flex;align-items:center;justify-content:space-between;gap:16px}.hero:before{content:"";position:absolute;width:310px;height:310px;border-radius:50%;background:#d5f2e7;right:-99px;bottom:-232px}.eyebrow{display:inline-block;font-size:12px;color:#bd6f62;background:#fff0c6;font-weight:900;letter-spacing:.055em;padding:6px 15px;border-radius:40px;margin-bottom:11px}h1{font-size:clamp(27px,4.4vw,43px);line-height:1.3;letter-spacing:.012em;margin-bottom:11px;font-weight:950}.hero h1 span{color:#ef7c9b}.hero p{margin:0;color:#758296;font-size:14px;max-width:645px;line-height:1.9}.mascot{position:relative;min-width:195px;align-self:center;display:grid;place-items:center}.mascot-blob{width:176px;height:176px;border-radius:49% 51% 47% 53%;border:6px solid white;background:#ffe2e9;box-shadow:0 13px 19px #eaa3b041;display:grid;place-items:center;animation:float 4s ease-in-out infinite}.mascot-blob span{font-size:99px;filter:drop-shadow(0 5px 0 #fff8)}.spark{position:absolute;font-size:26px;animation:blink 2s ease-in-out infinite alternate}.spark.s1{top:9px;left:-5px}.spark.s2{top:40px;right:-8px;animation-delay:.4s}.spark.s3{bottom:-8px;left:6px;animation-delay:.7s}@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}@keyframes blink{from{opacity:.5;transform:scale(.8) rotate(-13deg)}to{opacity:1;transform:scale(1.11) rotate(11deg)}}
-.roadmap-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:24px 5px 10px}.roadmap-head h2{font-size:19px;margin:0;font-weight:950}.roadmap-head p{margin:0;font-size:12px;color:#7f8b99}.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px}.step{position:relative;min-height:112px;text-align:left;padding:15px 13px;background:#fff;border:2px solid #fff;border-radius:20px;color:#60708a;box-shadow:0 5px 15px #656f8d10;transition:transform .2s,border .2s}.step:not(:disabled):hover{transform:translateY(-2px)}.step.active{border-color:#f4a4c1;box-shadow:0 9px 26px #ebafc143;background:#fffbfd}.step.complete{background:#f4fff9;border-color:#daf0e4}.step:disabled{opacity:.53}.step .ico{font-size:27px;display:block;margin-bottom:5px}.step .heading{display:block;font-size:14px;font-weight:950;color:#3e4b61}.step .sub{font-size:11px;color:#8794a5}.step .corner{position:absolute;right:11px;top:8px;color:#65aa86;font-size:14px;font-weight:900}
-.main{margin-top:17px}.panel{background:white;border-radius:27px;padding:29px 31px;box-shadow:var(--shadow);border:2px solid white}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:19px;margin-bottom:15px;flex-wrap:wrap}.title-row{display:flex;gap:16px;align-items:center}.stage-art{width:72px;height:72px;flex:0 0 auto;border-radius:22px;display:grid;place-items:center;font-size:36px;transform:rotate(-4deg)}.art0{background:#ffe5ef}.art1{background:#eee7ff}.art2{background:#e2f7ed}.art3{background:#fff0c7}.art4{background:#e2f2ff}.stage-mini{font-size:12px;font-weight:900;color:#d97a9b;letter-spacing:.05em}.panel h2{font-size:clamp(21px,3vw,26px);font-weight:950;line-height:1.45;margin:2px 0 5px}.desc{color:#7f8da0;font-size:13px;line-height:1.8;margin:0}.count{white-space:nowrap;border:2px solid #f8dbe8;background:#fff1f6;padding:10px 17px;border-radius:16px;color:#cb6890;font-weight:950;font-size:18px}.count.complete{background:#e8f8ef;color:#298766;border-color:#c6eedc}.rule{padding:12px 16px;background:#fff9e9;border:1px dashed #f2dfab;border-radius:15px;color:#887548;font-size:13px;margin:15px 0}.tools{display:flex;flex-wrap:wrap;gap:9px;justify-content:space-between;align-items:center;margin:18px 0 14px}.searchbox{height:44px;background:#fafafd;border:1.5px solid #e6e6ef;border-radius:13px;display:flex;align-items:center;gap:8px;padding:0 12px;flex:1 1 260px;max-width:390px}.searchbox span{font-size:18px}.searchbox input{min-width:0;width:100%;outline:none;border:none;background:transparent;color:var(--ink);font-size:13px}.searchbox:focus-within{border-color:#a7ccec}.toggles{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.light-btn{background:#fff;border:1.5px solid #e8e1ef;color:#736a91;border-radius:13px;padding:10px 14px;font-size:12px;font-weight:900}.light-btn:hover{background:#f6f1ff}.tiny-meta{font-size:12px;color:#97a0ac;margin:6px 0 13px}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.pick-card{min-height:70px;text-align:left;display:flex;align-items:center;gap:12px;background:#fff;border:2px solid #edf0f3;border-radius:16px;padding:12px 13px;transition:background .15s,border-color .15s,transform .15s;color:#45536b}.pick-card:not(:disabled):hover{transform:translateY(-2px);border-color:#e3b1ce;background:#fffafd}.pick-card.selected{border-color:#ef92b1;background:#fff0f5;box-shadow:0 5px 12px #f39dbc26}.pick-card:disabled:not(.selected){opacity:.45}.check{height:27px;width:27px;min-width:27px;border:2px solid #d5dce7;border-radius:9px;background:#fff;display:grid;place-items:center;color:white;font-weight:950;font-size:16px}.selected .check{background:#f07da5;border-color:#f07da5}.pick-text{font-size:13.5px;font-weight:800;line-height:1.5}.selected-bubble{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:18px 0 0;background:#f9f7ff;padding:12px 13px;border-radius:14px;min-height:47px}.selected-bubble strong{font-size:12px;color:#8876b0;margin-right:4px}.choice-chip{background:#fff;border:1px solid #e5dbf2;border-radius:30px;padding:6px 11px;font-size:12px;color:#6c6190;font-weight:800;display:inline-flex;gap:5px;align-items:center}.choice-chip button{background:none;border:none;color:#a48cae;font-size:14px;padding:0 1px;line-height:1;cursor:pointer}.empty{font-size:12px;color:#a0a3b4}.foot-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px dashed #edeaf0;margin-top:22px;padding-top:19px;flex-wrap:wrap}.foot-actions .foot-copy{font-size:12px;color:#8b97a5}.btn-row{display:flex;gap:10px;flex-wrap:wrap}.primary{color:#fff;font-weight:950;font-size:14px;padding:13px 22px;background:linear-gradient(115deg,#f68db1,#ec719d);border:0;border-radius:15px;box-shadow:0 8px 17px #efa1b74f;transition:transform .2s,filter .2s}.primary:not(:disabled):hover{transform:translateY(-2px);filter:brightness(1.02)}.primary:disabled{background:#c8cbd3;box-shadow:none}.secondary{color:#6c7190;background:#fff;border:1.5px solid #dddfea;border-radius:14px;padding:12px 17px;font-size:13px;font-weight:900}.secondary:hover{background:#f6f4ff}.hint{margin-top:17px;color:#818b99;font-size:12px;line-height:1.75;display:flex;align-items:flex-start;gap:7px}.hint b{color:#676e86}
-.inventory-legend{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:12px;color:#6d798e;margin-top:10px}.mini-demo{background:#f8fafc;border-radius:10px;padding:5px 11px;font-weight:850}.mini-demo.touched{background:#fff0dd;color:#ac7528}.mini-demo.used{background:#def7e9;color:#26856c}.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.statbox{background:#fbf7ff;border-radius:16px;text-align:center;padding:13px 7px}.statbox:nth-child(2){background:#fff6e6}.statbox:nth-child(3){background:#e8f8ef}.statbox:nth-child(4){background:#e9f3ff}.statbox b{display:block;font-size:24px;line-height:1.3}.statbox small{display:block;color:#7f899a;font-weight:800;font-size:11px}.name-area{padding:14px 17px;background:#f9faff;border-radius:14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}.name-area label{font-weight:900;font-size:13px}.name-area input{border:1.5px solid #e2e2ee;border-radius:11px;padding:10px 13px;max-width:260px;width:100%;background:white;color:var(--ink)}.name-area small{color:#8d99a9;font-size:11px}
-.filterbar{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.filterpill{border:1px solid #e6e1ed;background:white;border-radius:40px;color:#81859b;font-size:12px;padding:8px 12px;font-weight:850}.filterpill.on{background:#efebff;border-color:#cbbfed;color:#6b5ca5}.inventory-group{margin-top:18px}.group-heading{display:flex;align-items:center;gap:10px;margin:18px 2px 10px}.group-heading .dot{height:12px;width:12px;border-radius:50%;background:#efa0bb}.group-heading .dot.violet{background:#a990e6}.group-heading .dot.mint{background:#88d7b4}.group-heading h3{font-size:16px;margin:0;font-weight:950}.group-heading .group-count{color:#929aaa;font-size:12px}.survey-table,.report-table{width:100%;border-collapse:separate;border-spacing:0 8px}.survey-table th,.report-table th{text-align:left;font-size:12px;color:#8c98a5;padding:0 12px 6px;font-weight:900}.survey-table td,.report-table td{background:#f9fafc;padding:11px 12px;font-size:12px;vertical-align:middle}.survey-table tr td:first-child,.report-table tr td:first-child{border-radius:13px 0 0 13px}.survey-table tr td:last-child,.report-table tr td:last-child{border-radius:0 13px 13px 0}.sysname{font-weight:900;font-size:13px;color:#49576d}.sys-meta{font-size:10px;color:#9ba4b0;display:block;margin-top:2px}.sys-meta .vote-tick{color:#dc7595;font-weight:900}.status-control{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}.state-btn{border:1.5px solid #e2e5eb;background:#fff;color:#9099a7;padding:8px 10px;border-radius:12px;font-size:12px;font-weight:850;white-space:nowrap;min-width:76px}.state-btn:hover{border-color:#b7b9d6}.state-btn.touched{background:#ffefd7;color:#a76d23;border-color:#e9c585}.state-btn.used{background:#dff7e9;color:#207e60;border-color:#95d9b4}.status-badge{font-size:11px;border-radius:30px;padding:5px 9px;background:#f0f2f5;color:#8792a0;white-space:nowrap}.status-badge.touched{background:#ffedda;color:#a2702b}.status-badge.used{background:#dff7e9;color:#268369}.note-box{padding:13px 15px;border-left:3px solid #eaa8c4;background:#fff9fc;border-radius:10px;color:#877a90;font-size:12px;line-height:1.9;margin:13px 0}.chip-list{display:flex;flex-wrap:wrap;gap:8px}.ballot-review{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:21px 0}.ballot-card{background:#fff8fb;border:1px solid #f3dce8;border-radius:18px;padding:17px}.ballot-card:nth-child(2){background:#f8f6ff;border-color:#e5dcfa}.ballot-card:nth-child(3){background:#f1fcf7;border-color:#d9f1e4}.ballot-card h3{font-size:15px;font-weight:950;margin:0 0 11px}.voteitem{font-size:12.5px;background:white;border-radius:10px;border:1px solid #ece6ea;padding:7px 10px;margin-top:7px;color:#57647a;font-weight:780}.cheer{text-align:center;padding:12px 0 7px}.cheer .big{font-size:60px;display:block;line-height:1.25;margin-bottom:8px}.cheer h2{font-size:26px}.cheer p{font-size:13px;color:#7d8998}.chart-row{margin:6px 0 11px;display:flex;gap:13px;align-items:center;font-size:12px}.chart-row .ctlabel{min-width:60px;font-weight:850}.bar-track{height:11px;background:#f0edf1;flex:1;border-radius:99px;overflow:hidden}.bar-fill{height:100%;border-radius:99px;background:#81cdb9}.chart-row b{min-width:30px;text-align:right}.table-scroll{overflow-x:auto}.report-table{min-width:635px}.report-table th:nth-child(3){min-width:85px}.report-table th:nth-child(4){min-width:100px}.footline{margin-top:20px;text-align:center;color:#a3a1a6;font-size:12px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%) translateY(15px);opacity:0;pointer-events:none;background:#45526c;color:#fff;padding:11px 19px;border-radius:40px;font-size:13px;font-weight:850;z-index:30;transition:opacity .24s,transform .24s;box-shadow:0 7px 18px #3f425a42}.toast.show{transform:translateX(-50%) translateY(0);opacity:1}.confetti{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:20}.confetti i{position:absolute;top:-20px;width:9px;height:16px;border-radius:3px;animation:fall 1.5s linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(710deg);opacity:0}}
-@media(max-width:920px){.steps{gap:7px}.step{padding:12px 9px}.step .heading{font-size:12px}.cards{grid-template-columns:repeat(2,1fr)}.hero{padding:28px}.ballot-review{grid-template-columns:1fr}.ballot-card{padding:13px}.ballot-card .voteitem{display:inline-block;margin:4px 5px 0 0}}
-@media(max-width:640px){.wrap{width:min(100% - 20px,640px)}.topline{padding-top:10px}.brand{font-size:11px}.brand-icon{width:33px;height:33px}.top-meta .tag-soft{display:none}.hero{padding:22px 18px;min-height:unset;gap:3px;border-radius:24px}.hero h1{font-size:24px}.hero p{font-size:12px}.mascot{min-width:87px}.mascot-blob{height:83px;width:83px;border-width:4px}.mascot-blob span{font-size:52px}.spark{display:none}.roadmap-head{margin-top:19px}.roadmap-head h2{font-size:16px}.roadmap-head p{font-size:10px}.steps{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.step{min-height:82px;padding:7px 4px;border-radius:13px;text-align:center}.step .ico{font-size:20px;margin:0}.step .heading{font-size:10px;line-height:1.4}.step .sub{display:none}.step .corner{font-size:10px;right:4px;top:2px}.panel{border-radius:22px;padding:20px 14px}.panel-head{gap:9px}.title-row{gap:10px}.stage-art{width:54px;height:54px;border-radius:16px;font-size:28px}.panel h2{font-size:21px}.count{font-size:15px;padding:7px 10px}.desc{font-size:12px}.cards{grid-template-columns:1fr;gap:8px}.pick-card{min-height:53px;padding:9px 11px}.tools{margin-top:13px}.searchbox{max-width:none}.stat-row{grid-template-columns:repeat(2,minmax(0,1fr))}.survey-table th,.survey-table td{padding:8px 7px}.survey-table .sysname{font-size:12px}.state-btn{min-width:55px;padding:7px;font-size:11px}.survey-table th{font-size:10px}.group-heading h3{font-size:14px}.inventory-legend{font-size:11px}.step .heading{letter-spacing:-.025em}.foot-actions{position:sticky;bottom:7px;z-index:8;background:#fffd;border:1px solid #f2edf1;border-radius:15px;padding:10px;backdrop-filter:blur(13px);box-shadow:0 5px 17px #85819820}.foot-actions .foot-copy{flex:1 1 100%}.foot-actions .btn-row{width:100%;justify-content:flex-end}.primary{padding:11px 17px}.table-scroll{margin-left:-8px;margin-right:-8px}.report-table th,.report-table td{padding:9px 8px}.name-area{gap:7px}.name-area input{max-width:100%}}
-@media print{body{background:#fff}.topline,.hero,.steps,.roadmap-head,.tools,.foot-actions,.hint,.filterbar,.top-mini,.name-area,.confetti,.toast{display:none!important}.panel{box-shadow:none;padding:0;border:0}.wrap{width:100%}.report-table td,.report-table th{border-bottom:1px solid #eee}.ballot-review{grid-template-columns:repeat(3,1fr)}.table-scroll{overflow:visible}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-
-/* 兩頁共用的導覽按鈕：投票首頁／情境闖關／新公文操作教學 */
-.portal-nav { display:flex; flex-wrap:wrap; gap:10px; margin:0 1px 17px; align-items:center; }
-.portal-nav a { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:43px; padding:9px 17px; text-decoration:none; font-size:13px; font-weight:900; border-radius:999px; background:#fff; color:#69748a; border:1.5px solid #ede3e9; box-shadow:0 3px 10px #81819b0e; transition:transform .16s,background .16s; }
-.portal-nav a:hover { transform:translateY(-2px); background:#fff9fc; }
-.portal-nav a[aria-current="page"] { background:#ffe4ee; color:#b4517a; border-color:#f6bad0; }
-.portal-nav a.doc-link { margin-left:auto; background:#e8f8ef; border-color:#b7e7d3; color:#257d67; }
-.portal-nav a:focus-visible { outline:3px solid #72b2ef; outline-offset:2px; }
-.link-primary { display:inline-flex; text-decoration:none; align-items:center; justify-content:center; gap:7px; }
-@media (max-width:610px) { .portal-nav a{flex:1 1 auto;padding:10px 11px;font-size:12px} .portal-nav a.doc-link{margin-left:0;flex-basis:100%} }
-
-
-.next-play-box{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:18px;padding:18px 20px;background:linear-gradient(105deg,#fff2f6,#effaf6);border:1.5px solid #f6d7e4;border-radius:17px}
-.next-play-box b{font-size:16px;color:#6b517b}.next-play-box p{margin:4px 0 0;color:#79869a;font-size:12px}
-</style>
-</head>
-<body>
-<div class="wrap">
+<!-- ... existing code ... -->
 <header class="topline"><div class="brand"><span class="brand-icon" aria-hidden="true">🏫</span> TAIPEION × 臺北市教師研習中心</div><div class="top-meta"><span class="tag-soft">🌷 同仁體驗互動小遊戲</span><button class="top-mini" type="button" data-action="reset">↻ 清除並重來</button></div></header>
 <nav class="portal-nav" aria-label="TAIPEION 網站導覽">
-  <a href="<?= pollUrl ?>" target="_top" aria-current="page">🗳️ ① 三關投票與統計</a>
-  <a id="portalGameLink" href="<?= gameUrl ?>" target="_top">🐻 ② 公務情境闖關</a>
-  <a class="doc-link" href="<?= tutorialUrl ?>" target="_blank" rel="noopener noreferrer" aria-label="新公文系統操作教學（另開視窗）">📘 新公文系統操作教學 ↗</a>
+  <a href="index.html" target="_top" aria-current="page">🗳️ ① 三關投票與統計</a>
+  <a id="portalGameLink" href="Game.html" target="_top">🐻 ② 公務情境闖關</a>
+  <a class="doc-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="新公文系統操作教學（另開視窗）">📘 新公文系統操作教學 ↗</a>
 </nav>
 <section class="hero"><div><span class="eyebrow">⭐ 你的公務系統探險地圖</span><h1>公務小達人 <span>♡</span><br>三關人氣投票！</h1><p>哪些 TAIPEION 系統是你覺得教研中心同仁會用到的呢？<br>依序完成 <b>共通性 → 一條鞭 → 跨機關</b>，再盤點自己曾接觸或使用過的系統，一起完成小任務！</p></div><div class="mascot" aria-hidden="true"><div class="mascot-blob"><span>🐻</span></div><span class="spark s1">✨</span><span class="spark s2">🌼</span><span class="spark s3">⭐</span></div></section>
-<section aria-label="小遊戲步驟"><div class="roadmap-head"><h2>🗺️ 五站小旅程</h2><p>前三站各勾 3 個・第四站標記使用經驗・送出後自動統計</p></div><nav id="steps" class="steps" aria-label="進行步驟"></nav></section>
-<main id="app" class="main" aria-live="polite"></main>
-<footer class="footline">Made with ♡ for 教研中心｜Google 試算表同步統計版</footer>
-</div>
-<div id="toast" class="toast" role="status" aria-live="polite"></div><div id="confetti" class="confetti" aria-hidden="true"></div>
-<script>
-'use strict';
-// 名稱依使用者提供的 TAIPEION 系統畫面整理；系統類別可能交疊。
-const categories=[
- {name:'共通性',icon:'🧁',hint:'全中心同仁的日常行政工具',accent:'art0',systems:[
- '新公文系統','通訊錄','行事曆','布告欄','喬時間','文件傳閱','意見調查','帳號管理系統','KM知識管理','員工電子信箱','WebITR差勤系統','資料填報','課程報名系統','Ragic','表單流程平臺','雲端視訊會議管理','陳情系統','無紙會議','資訊系統報修','採購文件管理','員工參與入口網','MyDoc','電子領據','人事總處MyData','會議室系統','臺北e大','請購暨經費結報','藍芽定位打卡系統','iForm表單平臺','新公文(學校)','場地租用','行政興革建議','個人權利反映','會議作業系統'],
- suggested:['新公文系統','WebITR差勤系統','員工電子信箱','通訊錄','行事曆','課程報名系統','請購暨經費結報','資訊系統報修','無紙會議','會議室系統','表單流程平臺','文件傳閱']},
- {name:'一條鞭',icon:'📚',hint:'資訊、研考、人事、主計相關系統',accent:'art1',systems:[
- '網站整合平臺','TVMS資安管考','API申請系統','資料大平臺','圖資流通系統','個資去識別化平臺','圖資中心','市府微軟授權','資安健診管理平臺','資安弱點通報平臺','資通設備管理','場地租用管理','計畫管理系統','TCGHR人資系統','WebITR差勤系統','人事總處MyData','iPSN人事服務網','差勤刷卡系統','PIN人事作業網','公務聯絡簿','主計資料蒐整平臺','預算查詢服務平臺','主計服務網','議會預決算e平臺','主計智慧服務'],
- suggested:['WebITR差勤系統','人事總處MyData','計畫管理系統','主計服務網','預算查詢服務平臺','TCGHR人資系統','PIN人事作業網','網站整合平臺','市府微軟授權','TVMS資安管考','差勤刷卡系統','場地租用管理']},
- {name:'跨機關',icon:'🚀',hint:'資訊局及跨局處協作相關系統',accent:'art2',systems:[
- '(新)TPG(MAC)登錄','API申請系統','TVMS資安管考','台北通','市府微軟授權','市政訊息訂閱','派工系統','計畫管理系統','個資去識別化平臺','視覺化分析平臺','郵件備份系統','資料大平臺','電子收據系統','圖資中心','圖資流通系統','網站整合平臺','網路申辦','緊急聯絡人','臺北城市儀表板','學校-薪資管理','機關-薪資管理','議會案件管理','台北服務通','事務系統','請購核銷(教育)','智慧支付平臺','市政活動發布平臺','請購核銷(機關)'],
- suggested:['網站整合平臺','TVMS資安管考','市府微軟授權','計畫管理系統','資料大平臺','API申請系統','請購核銷(教育)','郵件備份系統','電子收據系統','臺北城市儀表板','市政活動發布平臺','派工系統']}
-];
-const allSystems=[];const membership=new Map();categories.forEach((cat,i)=>cat.systems.forEach(n=>{if(!membership.has(n)){membership.set(n,[]);allSystems.push(n)}membership.get(n).push(i)}));
-const storageKey='taipeion-cute-google-sheets-v1';
-const blank=()=>({step:0,votes:[[],[],[]],experience:{},name:'',filter:'all',expanded:[false,false,false],expandedInventory:false,search:'',inventorySearch:'',resultSearch:'',resultFilter:'all',submitted:false,receipt:null,clientId:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)});
-let state=blank();try{const saved=JSON.parse(localStorage.getItem(storageKey)||'null');if(saved&&Array.isArray(saved.votes)&&saved.votes.length===3){state={...blank(),...saved};if(!Array.isArray(state.expanded))state.expanded=[false,false,false];state.step=Math.max(0,Math.min(4,Number(state.step)||0));for(let i=0;i<3;i++){state.votes[i]=(Array.isArray(state.votes[i])?state.votes[i]:[]).filter(n=>categories[i].systems.includes(n)).slice(0,3)}if(!state.experience||typeof state.experience!=='object')state.experience={};if(state.step>0&&state.votes.slice(0,Math.min(3,state.step)).some(v=>v.length!==3))state.step=0}}
-catch(e){state=blank()}
-const el=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
-function save(){try{localStorage.setItem(storageKey,JSON.stringify(state))}catch(e){}}
-function showToast(msg){const e=el('toast');e.textContent=msg;e.classList.add('show');clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>e.classList.remove('show'),2100)}
-function renderSteps(){let names=['共通性','一條鞭','跨機關','使用經驗','成果總表'];let icons=['🧁','📚','🚀','📝','🏆'];let desc=['第一關','第二關','第三關','第四站','完成'];el('steps').innerHTML=names.map((n,i)=>{const done=i<state.step,locked=i>state.step;return `<button type="button" class="step ${i===state.step?'active':''} ${done?'complete':''}" data-step="${i}" ${locked?'disabled':''} ${i===state.step?'aria-current="step"':''}><span class="corner">${done?'✓':''}</span><span class="ico">${icons[i]}</span><span class="heading">${n}</span><span class="sub">${desc[i]}</span></button>`}).join('')}
-function progressPanel(opts){const {art,icon,overline,title,desc,right}=opts;return `<section class="panel"><div class="panel-head"><div class="title-row"><div class="stage-art ${art}" aria-hidden="true">${icon}</div><div><span class="stage-mini">${overline}</span><h2>${title}</h2><p class="desc">${desc}</p></div></div>${right||''}</div>`}
-function renderPoll(){const i=state.step,cat=categories[i],selected=state.votes[i],q=state.search.trim().toLocaleLowerCase('zh-Hant'),all=cat.systems,filtered=all.filter(s=>s.toLocaleLowerCase('zh-Hant').includes(q));const featured=cat.suggested.filter(n=>filtered.includes(n));const shown=q?filtered:(state.expanded[i]?featured.concat(filtered.filter(n=>!featured.includes(n))):featured.concat(selected.filter(n=>!featured.includes(n))));const html=progressPanel({art:cat.accent,icon:cat.icon,overline:`投票關卡 0${i+1} / 03`,title:`${cat.name}｜選出你心中的 3 個常用系統`,desc:`你覺得教研中心公務人員，日常工作中可能會使用哪些「${cat.name}」系統？`,right:`<div class="count ${selected.length===3?'complete':''}" aria-label="已選 ${selected.length} 個，共需 3 個">${selected.length} / 3 <span style="font-size:12px">個</span></div>`})+`
-<div class="rule">📮 <b>投票規則：</b>每關請<strong>恰好勾選 3 個系統</strong>，才能前往下一關。這是個人經驗與判斷投票，<b>沒有標準答案</b>喔！</div>
-<div class="tools"><label class="searchbox"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="搜尋${cat.name}系統名稱..." value="${esc(state.search)}" aria-label="搜尋系統名稱" autocomplete="off"></label><div class="toggles"><button class="light-btn" type="button" data-action="${state.expanded[i]?'compact':'expand'}">${state.expanded[i]?'收起較少顯示':'查看全部 '+all.length+' 個系統'} ${state.expanded[i]?'↑':'↓'}</button></div></div>
-<p class="tiny-meta">${q?`搜尋結果：${shown.length} 項`:(state.expanded[i]?'已顯示完整系統清單':`先顯示可能較常接觸的候選系統（${featured.length} 項）；可以展開全部自行挑選`)}。先顯示的項目並非正確答案或官方排名。</p>
-<div class="cards" id="pickCards">${shown.length?shown.map(s=>{const on=selected.includes(s);return `<button class="pick-card ${on?'selected':''}" type="button" data-pick="${esc(s)}" ${selected.length===3&&!on?'disabled':''} aria-pressed="${on}"><span class="check" aria-hidden="true">${on?'✓':''}</span><span class="pick-text">${esc(s)}</span></button>`}).join(''):'<p class="desc">🔎 找不到符合的系統，請試試其他關鍵字。</p>'}</div>
-<div class="selected-bubble" aria-live="polite"><strong>🌷 我的 3 個選擇</strong>${selected.length?selected.map(s=>`<span class="choice-chip">${esc(s)}<button type="button" data-remove="${esc(s)}" aria-label="取消選擇${esc(s)}">×</button></span>`).join(''):'<span class="empty">尚未選擇，點選上方的系統卡片吧 ♡</span>'}</div>
-<div class="foot-actions"><span class="foot-copy">${selected.length<3?`還差 ${3-selected.length} 個就可以繼續了！`:'🎉 已選滿 3 個，可以前往下一站。'}</span><div class="btn-row">${i>0?'<button type="button" class="secondary" data-action="back">← 上一關</button>':''}<button type="button" class="primary" data-action="next" ${selected.length!==3?'disabled':''}>${i===2?'前往使用經驗總表 →':'前往下一關 →'}</button></div></div>
-</section><div class="hint">💡 <span>依照提供的 TAIPEION 截圖整理候選清單。不同分類可能出現同一系統，代表它可能在不同選單中都看得到。<b>同臺電腦換人填寫時，請先按「清除並重來」；完成填答按下送出後，將自動記錄到 Google 試算表。</b></span></div>`;el('app').innerHTML=html}
-function getStatus(n){return state.experience[n]==='used'?'used':state.experience[n]==='touched'?'touched':'none'}
-function markedNames(){return allSystems.filter(n=>getStatus(n)!=='none')}
-function voteNames(){return [...new Set(state.votes.flat())]}
-function countStats(){const touched=markedNames().filter(n=>getStatus(n)==='touched').length;const used=markedNames().filter(n=>getStatus(n)==='used').length;return {votes:9,unique:voteNames().length,touched,used,total:touched+used}}
-function statMarkup(){const s=countStats();return `<div class="stat-row"><div class="statbox"><b>9</b><small>三關合計票數</small></div><div class="statbox"><b>${s.unique}</b><small>投票不重複系統</small></div><div class="statbox"><b>${s.touched}</b><small>接觸但未操作</small></div><div class="statbox"><b>${s.used}</b><small>實際使用過</small></div></div>`}
-function filterItem(n,q,filter){if(!n.toLocaleLowerCase('zh-Hant').includes(q))return false;if(filter==='all')return true;if(filter==='voted')return voteNames().includes(n);if(filter.startsWith('cat'))return membership.get(n).includes(Number(filter.slice(3)));if(filter==='used')return getStatus(n)==='used';if(filter==='touched')return getStatus(n)==='touched';return true}
-function filterButtons(current,kind){const xs=[['all','全部'],['voted','我投票選的'],['cat0','共通性'],['cat1','一條鞭'],['cat2','跨機關'],['touched','接觸過'],['used','使用過']];return `<div class="filterbar">${xs.map(([val,label])=>`<button type="button" class="filterpill ${val===current?'on':''}" data-filter="${val}" data-filter-kind="${kind}" aria-pressed="${val===current}">${label}</button>`).join('')}</div>`}
-function groupedNames(query,filter,onlyMarked=false){const groups=[[],[],[]];let available;
-if(onlyMarked)available=markedNames();
-else if(state.expandedInventory || query || filter!=='all')available=allSystems;
-else available=allSystems.filter(n=>voteNames().includes(n)||getStatus(n)!=='none');
-available.forEach(n=>{if(!filterItem(n,query,filter))return;groups[membership.get(n)[0]].push(n)});return groups}
-function inventoryRow(n){const status=getStatus(n),tags=membership.get(n).map(i=>categories[i].name);const votes=categories.filter((c,i)=>state.votes[i].includes(n)).map(c=>c.name);return `<tr><td><div class="sysname">${esc(n)}</div><span class="sys-meta">${esc(tags.join(' / '))}${votes.length?` · <span class="vote-tick">★ 三關投票：${esc(votes.join('、'))}</span>`:''}</span></td><td><div class="status-control"><button type="button" class="state-btn ${status==='touched'?'touched':''}" data-status="touched" data-system="${esc(n)}" aria-pressed="${status==='touched'}">👀 接觸過</button><button type="button" class="state-btn ${status==='used'?'used':''}" data-status="used" data-system="${esc(n)}" aria-pressed="${status==='used'}">💚 使用過</button></div></td></tr>`}
-function renderInventory(){const q=state.inventorySearch.trim().toLocaleLowerCase('zh-Hant'),groups=groupedNames(q,state.filter),shown=groups.flat().length;el('app').innerHTML=progressPanel({art:'art3',icon:'📝',overline:'第四站 / 個人使用經驗盤點',title:'你真正接觸或操作過哪些系統？',desc:'預設只顯示三關投票所選系統；如有其他實際接觸過的系統，也可展開完整清單補選。'})+`
-<div class="note-box">🌼 <b>勾選方式：</b>「👀 接觸過」＝曾接觸，但未自行操作；「💚 使用過」＝曾親自操作。同一系統只能選一種狀態；點同個按鈕可取消。<b>成果表與試算表使用經驗明細只會列出有勾選的系統。</b></div>
-<div class="name-area"><label for="nickname">✏️ 同仁暱稱（選填）</label><input id="nickname" type="text" maxlength="40" placeholder="例如：教務組小熊" value="${esc(state.name)}"><small>送出後暱稱也會保存在管理者的試算表；不需要填真實姓名。</small></div>
-${statMarkup()}
-<div class="tools"><label class="searchbox"><span>⌕</span><input id="inventorySearch" type="search" value="${esc(state.inventorySearch)}" placeholder="搜尋系統名稱（可搜尋完整清單）" aria-label="搜尋使用經驗" autocomplete="off"></label><button type="button" class="light-btn" data-action="toggleInventory">${state.expandedInventory?'收合為投票選擇':'展開完整 '+allSystems.length+' 個系統'} ${state.expandedInventory?'↑':'↓'}</button></div>
-<p class="tiny-meta">目前顯示 ${shown} 項；已勾選使用經驗 ${markedNames().length} 項。未勾選不會當成「完全沒用過」來統計。</p>
-${filterButtons(state.filter,'inventory')}
-<div class="inventory-legend"><b>經驗標記</b><span class="mini-demo touched">👀 接觸過</span><span class="mini-demo used">💚 實際使用過</span></div>
-${groups.map((arr,i)=>!arr.length?'':`<section class="inventory-group"><div class="group-heading"><span class="dot ${i===1?'violet':i===2?'mint':''}"></span><h3>${categories[i].name}</h3><span class="group-count">${arr.length} 項（同名系統僅列一次）</span></div><table class="survey-table"><thead><tr><th scope="col">系統名稱</th><th scope="col" style="text-align:right">我的使用經驗</th></tr></thead><tbody>${arr.map(inventoryRow).join('')}</tbody></table></section>`).join('')||'<p class="note-box">🔎 目前沒有符合條件的系統，可嘗試搜尋或展開全部清單。</p>'}
-<div class="foot-actions"><span class="foot-copy" id="sendNote">📊 按下送出後，三關共 9 票與勾選的使用經驗會自動記錄於 Google 試算表。</span><div class="btn-row"><button type="button" class="secondary" data-action="back">← 返回投票</button><button type="button" class="primary" data-action="next" id="submitBtn">☁️ 送出並查看成果</button></div></div></section>`}
-function statusBadge(n){const v=getStatus(n);return `<span class="status-badge ${v}">${v==='used'?'💚 實際使用過':'👀 接觸但未操作'}</span>`}
-function reportRows(){const q=state.resultSearch.trim().toLocaleLowerCase('zh-Hant'),groups=groupedNames(q,state.resultFilter,true);return groups.map(arr=>arr.map(n=>`<tr><td><b>${esc(n)}</b></td><td>${esc(membership.get(n).map(i=>categories[i].name).join('、'))}</td><td>${esc(categories.filter((c,j)=>state.votes[j].includes(n)).map(c=>c.name).join('、')||'—')}</td><td>${statusBadge(n)}</td></tr>`).join('')).join('')||'<tr><td colspan="4">尚未勾選接觸或使用經驗。</td></tr>'}
-function renderReport(){const s=countStats();el('app').innerHTML=progressPanel({art:'art4',icon:'🎁',overline:'全部完成 / 個人成果小卡',title:`${state.name?esc(state.name)+'，':''}太棒了！你完成所有任務 ♡`,desc:'三關投票及個人接觸／使用紀錄已完成，以下只列出你有勾選使用經驗的系統。'})+`
-<div class="cheer"><span class="big">🐻🎊</span><h2>任務完成，公務探險家！</h2><p>${state.receipt?'☁️ 已寫入 Google 試算表！目前累計 '+state.receipt.totalRespondents+' 份有效填答。':'資料已成功送出！'}</p></div>
-<div class="ballot-review">${categories.map((cat,i)=>`<section class="ballot-card"><h3>${cat.icon} 第 ${i+1} 關｜${cat.name}</h3>${state.votes[i].map((n,j)=>`<div class="voteitem">${j+1}. ${esc(n)}</div>`).join('')}</section>`).join('')}</div>
-${statMarkup()}
-<div class="note-box">📮 三關各 3 票，共 <b>9 票</b>；有勾選使用經驗的系統共 <b>${s.total} 個</b>（接觸但未操作 ${s.touched}、實際使用 ${s.used}）。此份資料是你的個人回顧，不是全中心實際使用率。</div>
-<div style="margin:22px 0 17px"><h3 style="margin:0 0 12px;font-size:17px">📊 我勾選的接觸與使用經驗</h3>${[['實際使用',s.used,'#72c8a6'],['接觸未操作',s.touched,'#f5c178']].map(([label,n,color])=>`<div class="chart-row"><span class="ctlabel">${label}</span><div class="bar-track"><div class="bar-fill" style="width:${s.total?100*n/s.total:0}%;background:${color}"></div></div><b>${n}</b></div>`).join('')}</div>
-<div class="tools"><div><h3 style="margin:0 0 4px;font-size:18px">📋 使用經驗總表（只列勾選項目）</h3><p class="desc">只顯示有標記「接觸過」或「使用過」的系統；同名只列一次。</p></div><label class="searchbox"><span>⌕</span><input type="search" id="resultSearch" placeholder="搜尋勾選結果..." value="${esc(state.resultSearch)}" aria-label="搜尋成果總表" autocomplete="off"></label></div>
-${filterButtons(state.resultFilter,'result')}
-<div class="table-scroll"><table class="report-table"><thead><tr><th scope="col">系統名稱</th><th scope="col">所屬分類</th><th scope="col">三關投票</th><th scope="col">我的使用經驗</th></tr></thead><tbody id="reportBody">${reportRows()}</tbody></table></div>
-<div class="note-box">🔒 試算表的「三關投票明細」每份填答會增加 9 列；「使用經驗明細」只增加你實際勾選的項目。「系統統計」與「總覽」會自動更新。勾選結果不會顯示給其他填答者。</div>
-<div class="foot-actions"><span class="foot-copy">想留存自己的填答內容，可下載 CSV 或列印。</span><div class="btn-row"><button class="secondary" type="button" data-action="print">🖨 列印</button><button class="primary" type="button" data-action="csv">⬇ 下載個人結果 CSV</button></div></div>
-<div class="next-play-box"><div><b>🎮 完成投票！下一站，公務情境闖關</b><p>用 18 題情境題認識常用的 TAIPEION 系統；遊戲分數不會與問卷投票混在一起。</p></div><a class="primary link-primary" href="${esc(document.getElementById('portalGameLink').href)}" target="_top">🐻 開始情境闖關 →</a></div></section>`}
-function render(){renderSteps();if(state.step<3)renderPoll();else if(state.step===3)renderInventory();else renderReport()}
+<!-- ... existing code ... -->
 function setStep(n){if(state.submitted){showToast('這份已送出。如要重新填答，請選「清除並重來」。');return}if(n>state.step)return;state.step=n;state.search='';save();render();window.scrollTo({top:0,behavior:'smooth'})}
 let sending=false;
 function next(){if(sending||state.submitted)return;if(state.step<3&&state.votes[state.step].length!==3){showToast('🌷 請先勾滿 3 個系統喔');return}if(state.step===3){submitSurvey();return}if(state.step<3){state.step++;state.search='';save();render();window.scrollTo({top:0,behavior:'smooth'})}}
-function submitSurvey(){
-  if(sending)return;
-  sending=true;
-  const btn=el('submitBtn');
-  if(btn){btn.disabled=true;btn.textContent='☁️ 正在寫入試算表…'}
-  
-  const experience={};
-  markedNames().forEach(n=>{experience[n]=getStatus(n)});
-  const payload={clientId:state.clientId,name:state.name,votes:state.votes.map(v=>v.slice()),experience};
+function submitSurvey(){if(sending)return;
+sending=true;const btn=el('submitBtn');if(btn){btn.disabled=true;btn.textContent='☁️ 正在寫入試算表…'}
+const experience={};markedNames().forEach(n=>{experience[n]=getStatus(n)});
+const payload={clientId:state.clientId,name:state.name,votes:state.votes.map(v=>v.slice()),experience};
 
-  // 透過 Fetch 發送 POST 請求至提供的 Apps Script 網址
-  fetch('https://script.google.com/macros/s/AKfycbx7_GqDp6XQDGG-k8UaTGWSx9eqf2UPdjCEYKepVp37fjU7Toxj8drAj-HAiPFc_3hUhw/exec', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' } // 避免發生 CORS 預檢問題
-  }).then(res => res.json()).then(result => {
-    sending=false;
-    if(!result||!result.ok){
-      const b=el('submitBtn');
-      if(b){b.disabled=false;b.textContent='☁️ 再試一次送出'}
-      showToast('資料儲存未確認，請再試一次');
-      return;
-    }
-    state.submitted=true;
-    state.receipt=result;
-    state.step=4;
-    save();
-    render();
-    window.scrollTo({top:0,behavior:'smooth'});
-    celebrate();
-    showToast(result.duplicate?'✅ 此份填答已存在，不重複計票':'✅ 已寫入 Google 試算表！');
-  }).catch(err => {
-    sending=false;
-    const b=el('submitBtn');
-    if(b){b.disabled=false;b.textContent='☁️ 重試送出'}
-    const msg=(err&&err.message)||String(err);
-    const note=el('sendNote');
-    if(note)note.textContent='⚠️ 寫入失敗：'+msg;
-    showToast('⚠️ 上傳失敗，資料仍在此瀏覽器，可重試');
-  });
-}
+// 使用 fetch API 將 JSON 傳送至指定的 Apps Script 部署網址
+const scriptURL = 'https://script.google.com/macros/s/AKfycbx7_GqDp6XQDGG-k8UaTGWSx9eqf2UPdjCEYKepVp37fjU7Toxj8drAj-HAiPFc_3hUhw/exec';
+
+fetch(scriptURL, {
+  method: 'POST',
+  body: JSON.stringify(payload),
+  // 設定為 text/plain 避免遇到 CORS preflight 阻擋問題
+  headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+})
+.then(r => r.json())
+.then(result => {
+  sending=false;
+  if(!result||!result.ok){
+    const b=el('submitBtn');if(b){b.disabled=false;b.textContent='☁️ 再試一次送出'}
+    showToast('資料儲存未確認，請再試一次');return;
+  }
+  state.submitted=true;state.receipt=result;state.step=4;save();render();
+  window.scrollTo({top:0,behavior:'smooth'});celebrate();
+  showToast(result.duplicate?'✅ 此份填答已存在，不重複計票':'✅ 已寫入 Google 試算表！');
+})
+.catch(err => {
+  sending=false;
+  const b=el('submitBtn');if(b){b.disabled=false;b.textContent='☁️ 重試送出'}
+  const msg=(err&&err.message)||String(err);
+  const note=el('sendNote');if(note)note.textContent='⚠️ 寫入失敗：'+msg;
+  showToast('⚠️ 上傳失敗，請檢查網路狀態並重試');
+});}
 function togglePick(n){const selected=state.votes[state.step];if(selected.includes(n)){state.votes[state.step]=selected.filter(s=>s!==n)}else if(selected.length<3)selected.push(n);else{showToast('🌷 每關最多選 3 個喔！');return}save();renderPoll()}
-function setExperience(n,to){if(!membership.has(n))return;state.experience[n]=getStatus(n)===to?'none':to;save();renderInventory()}
-function celebrate(){const host=el('confetti');host.innerHTML='';const colors=['#f6a6bd','#f6cf7c','#b6a8f3','#90d9bc','#a4d8f9'];for(let i=0;i<42;i++){const d=document.createElement('i');d.style.left=Math.random()*100+'%';d.style.background=colors[i%colors.length];d.style.animationDelay=Math.random()*.75+'s';d.style.transform=`rotate(${Math.random()*90}deg)`;host.appendChild(d)}setTimeout(()=>host.innerHTML='',2400)}
-function downloadCSV(){const header=['暱稱（選填）','資料類型','關卡／分類','系統名稱','接觸或使用狀態','填寫日期'];const now=new Date();const stamp=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;const rows=[...state.votes.flatMap((group,i)=>group.map(n=>[state.name,'投票',categories[i].name,n,'',stamp])),...markedNames().map(n=>[state.name,'使用經驗',membership.get(n).map(i=>categories[i].name).join('、'),n,getStatus(n)==='used'?'實際使用過':'接觸但未操作',stamp])];const safeCell=v=>{const s=String(v);return '"'+(/^[\s]*[=+\-@]/.test(s)?"'"+s:s).replace(/"/g,'""')+'"'};const csv='\uFEFF'+[header,...rows].map(row=>row.map(safeCell).join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`TAIPEION_投票與使用經驗_${stamp}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);showToast('📥 已下載僅包含投票與勾選經驗的 CSV')}
-function updateListFromSearch(id){const input=el(id);if(!input)return;const pos=input.selectionStart??input.value.length;let value=input.value;if(id==='search')state.search=value;else if(id==='inventorySearch')state.inventorySearch=value;else state.resultSearch=value;save();render();const nextInput=el(id);if(nextInput){nextInput.focus();try{nextInput.setSelectionRange(pos,pos)}catch(e){}}}
-function handleClick(e){const stepBtn=e.target.closest('[data-step]');if(stepBtn){setStep(Number(stepBtn.dataset.step));return}const pick=e.target.closest('[data-pick]');if(pick&&state.step<3&&!state.submitted){togglePick(pick.dataset.pick);return}const rm=e.target.closest('[data-remove]');if(rm&&state.step<3&&!state.submitted){togglePick(rm.dataset.remove);return}const stat=e.target.closest('[data-status]');if(stat&&state.step===3&&!state.submitted){setExperience(stat.dataset.system,stat.dataset.status);return}const flt=e.target.closest('[data-filter]');if(flt){if(flt.dataset.filterKind==='inventory')state.filter=flt.dataset.filter;else state.resultFilter=flt.dataset.filter;save();render();return}const btn=e.target.closest('[data-action]');if(!btn)return;switch(btn.dataset.action){case'next':next();break;case'back':setStep(Math.max(0,state.step-1));break;case'expand':state.expanded[state.step]=true;save();renderPoll();break;case'compact':state.expanded[state.step]=false;save();renderPoll();break;case'toggleInventory':state.expandedInventory=!state.expandedInventory;save();renderInventory();break;case'csv':downloadCSV();break;case'print':window.print();break;case'reset':if(window.confirm(state.submitted?'已送出的舊資料仍會留在 Google 試算表。確定要開始新的填答嗎？':'確定要清除這台電腦上的投票紀錄、重新填答嗎？')){state=blank();save();render();window.scrollTo({top:0,behavior:'smooth'});showToast('已重新開始 🌷')}break}}
-document.addEventListener('click',handleClick);document.addEventListener('input',e=>{if(['search','inventorySearch','resultSearch'].includes(e.target.id))updateListFromSearch(e.target.id);else if(e.target.id==='nickname'){state.name=e.target.value;save()}});render();
-</script>
-</body>
-</html>
+<!-- ... existing code ... -->
