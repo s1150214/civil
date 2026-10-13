@@ -106,7 +106,7 @@ ${groups.map((arr,i)=>!arr.length?'':`<section class="inventory-group"><div clas
 function statusBadge(n){const v=getStatus(n);return `<span class="status-badge ${v}">${v==='used'?'💚 實際使用過':'👀 接觸但未操作'}</span>`}
 function reportRows(){const q=state.resultSearch.trim().toLocaleLowerCase('zh-Hant'),groups=groupedNames(q,state.resultFilter,true);return groups.map(arr=>arr.map(n=>`<tr><td><b>${esc(n)}</b></td><td>${esc(membership.get(n).map(i=>categories[i].name).join('、'))}</td><td>${esc(categories.filter((c,j)=>state.votes[j].includes(n)).map(c=>c.name).join('、')||'—')}</td><td>${statusBadge(n)}</td></tr>`).join('')).join('')||'<tr><td colspan="4">尚未勾選接觸或使用經驗。</td></tr>'}
 function renderReport(){const s=countStats();el('app').innerHTML=progressPanel({art:'art4',icon:'🎁',overline:'全部完成 / 個人成果小卡',title:`${state.name?esc(state.name)+'，':''}太棒了！你完成所有任務 ♡`,desc:'三關投票及個人接觸／使用紀錄已完成，以下只列出你有勾選使用經驗的系統。'})+`
-<div class="cheer"><span class="big">🐻🎊</span><h2>任務完成，公務探險家！</h2><p>${state.receipt?'☁️ 已寫入 Google 試算表！目前累計 '+state.receipt.totalRespondents+' 份有效填答。':'此為離線預覽，尚未上傳資料。請從 Apps Script 部署網址正式填寫。'}</p></div>
+<div class="cheer"><span class="big">🐻🎊</span><h2>任務完成，公務探險家！</h2><p>${state.receipt?'☁️ 已寫入 Google 試算表！目前累計 '+state.receipt.totalRespondents+' 份有效填答。':'資料已成功送出！'}</p></div>
 <div class="ballot-review">${categories.map((cat,i)=>`<section class="ballot-card"><h3>${cat.icon} 第 ${i+1} 關｜${cat.name}</h3>${state.votes[i].map((n,j)=>`<div class="voteitem">${j+1}. ${esc(n)}</div>`).join('')}</section>`).join('')}</div>
 ${statMarkup()}
 <div class="note-box">📮 三關各 3 票，共 <b>9 票</b>；有勾選使用經驗的系統共 <b>${s.total} 個</b>（接觸但未操作 ${s.touched}、實際使用 ${s.used}）。此份資料是你的個人回顧，不是全中心實際使用率。</div>
@@ -121,12 +121,47 @@ function render(){renderSteps();if(state.step<3)renderPoll();else if(state.step=
 function setStep(n){if(state.submitted){showToast('這份已送出。如要重新填答，請選「清除並重來」。');return}if(n>state.step)return;state.step=n;state.search='';save();render();window.scrollTo({top:0,behavior:'smooth'})}
 let sending=false;
 function next(){if(sending||state.submitted)return;if(state.step<3&&state.votes[state.step].length!==3){showToast('🌷 請先勾滿 3 個系統喔');return}if(state.step===3){submitSurvey();return}if(state.step<3){state.step++;state.search='';save();render();window.scrollTo({top:0,behavior:'smooth'})}}
-function submitSurvey(){if(sending)return;const runner=typeof google!=='undefined'&&google.script&&google.script.run;
-if(!runner){showToast('⚠️ 尚未連線：請透過 Apps Script 部署網址填寫。');const note=el('sendNote');if(note)note.textContent='此為本機預覽，不能直接寫入試算表。請使用 Apps Script 網頁應用程式網址。';return}
-sending=true;const btn=el('submitBtn');if(btn){btn.disabled=true;btn.textContent='☁️ 正在寫入試算表…'}
-const experience={};markedNames().forEach(n=>{experience[n]=getStatus(n)});
-const payload={clientId:state.clientId,name:state.name,votes:state.votes.map(v=>v.slice()),experience};
-google.script.run.withSuccessHandler(result=>{sending=false;if(!result||!result.ok){const b=el('submitBtn');if(b){b.disabled=false;b.textContent='☁️ 再試一次送出'}showToast('資料儲存未確認，請再試一次');return}state.submitted=true;state.receipt=result;state.step=4;save();render();window.scrollTo({top:0,behavior:'smooth'});celebrate();showToast(result.duplicate?'✅ 此份填答已存在，不重複計票':'✅ 已寫入 Google 試算表！')}).withFailureHandler(err=>{sending=false;const b=el('submitBtn');if(b){b.disabled=false;b.textContent='☁️ 重試送出'}const msg=(err&&err.message)||String(err);const note=el('sendNote');if(note)note.textContent='⚠️ 寫入失敗：'+msg+'。請確認管理者已執行 setup 並完成部署。';showToast('⚠️ 上傳失敗，資料仍在此瀏覽器，可重試')}).submitResponse(payload)}
+function submitSurvey(){
+  if(sending)return;
+  sending=true;
+  const btn=el('submitBtn');
+  if(btn){btn.disabled=true;btn.textContent='☁️ 正在寫入試算表…'}
+  
+  const experience={};
+  markedNames().forEach(n=>{experience[n]=getStatus(n)});
+  const payload={clientId:state.clientId,name:state.name,votes:state.votes.map(v=>v.slice()),experience};
+
+  // 透過 Fetch 發送 POST 請求至提供的 Apps Script 網址
+  fetch('https://script.google.com/macros/s/AKfycbx7_GqDp6XQDGG-k8UaTGWSx9eqf2UPdjCEYKepVp37fjU7Toxj8drAj-HAiPFc_3hUhw/exec', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' } // 避免發生 CORS 預檢問題
+  }).then(res => res.json()).then(result => {
+    sending=false;
+    if(!result||!result.ok){
+      const b=el('submitBtn');
+      if(b){b.disabled=false;b.textContent='☁️ 再試一次送出'}
+      showToast('資料儲存未確認，請再試一次');
+      return;
+    }
+    state.submitted=true;
+    state.receipt=result;
+    state.step=4;
+    save();
+    render();
+    window.scrollTo({top:0,behavior:'smooth'});
+    celebrate();
+    showToast(result.duplicate?'✅ 此份填答已存在，不重複計票':'✅ 已寫入 Google 試算表！');
+  }).catch(err => {
+    sending=false;
+    const b=el('submitBtn');
+    if(b){b.disabled=false;b.textContent='☁️ 重試送出'}
+    const msg=(err&&err.message)||String(err);
+    const note=el('sendNote');
+    if(note)note.textContent='⚠️ 寫入失敗：'+msg;
+    showToast('⚠️ 上傳失敗，資料仍在此瀏覽器，可重試');
+  });
+}
 function togglePick(n){const selected=state.votes[state.step];if(selected.includes(n)){state.votes[state.step]=selected.filter(s=>s!==n)}else if(selected.length<3)selected.push(n);else{showToast('🌷 每關最多選 3 個喔！');return}save();renderPoll()}
 function setExperience(n,to){if(!membership.has(n))return;state.experience[n]=getStatus(n)===to?'none':to;save();renderInventory()}
 function celebrate(){const host=el('confetti');host.innerHTML='';const colors=['#f6a6bd','#f6cf7c','#b6a8f3','#90d9bc','#a4d8f9'];for(let i=0;i<42;i++){const d=document.createElement('i');d.style.left=Math.random()*100+'%';d.style.background=colors[i%colors.length];d.style.animationDelay=Math.random()*.75+'s';d.style.transform=`rotate(${Math.random()*90}deg)`;host.appendChild(d)}setTimeout(()=>host.innerHTML='',2400)}
