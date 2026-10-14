@@ -89,40 +89,86 @@ function render(){
  const submit=document.getElementById('submitBtn');if(submit)submit.addEventListener('click',submitSurvey);
 }
 function renderDone(){app.innerHTML=`<div class="summary"><h2>🎉 填答已完成！</h2><p>收據編號：<b>${esc(state.receipt?.receiptId||'已保存')}</b></p><p>你的投票已在本機標記為完成。若要開始新一份填答，請按右上方「清除並重來」。</p><button class="secondary" id="receiptBtn">查看送出摘要</button><pre id="receipt" style="white-space:pre-wrap;display:none"></pre></div>`;document.getElementById('receiptBtn').onclick=()=>{const p=document.getElementById('receipt');p.style.display=p.style.display==='none'?'block':'none';p.textContent=JSON.stringify({name:state.name,votes:state.votes,experience:state.experience,receipt:state.receipt},null,2)}}
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMH60yN3T6HnJ8Eaz8hceKooh8_-kKMYyEFThovKUBfZwFtQKgxpRpmZBderCZ93VEow/exec';
+const GITHUB_ORIGIN = 'https://s1150214.github.io';
+let bridgeReady = false;
+let bridgeWaiters = [];
+let bridgeFrame = null;
+let bridgeRequestId = 0;
+const bridgePending = new Map();
+
+function ensureBridge(){
+ if(bridgeFrame) return;
+ bridgeFrame=document.createElement('iframe');
+ bridgeFrame.title='Google Apps Script 安全送出通道';
+ bridgeFrame.setAttribute('aria-hidden','true');
+ bridgeFrame.style.cssText='position:fixed;width:1px;height:1px;left:-10px;bottom:0;border:0;opacity:0;pointer-events:none';
+ bridgeFrame.src=SCRIPT_URL+'?bridge=1';
+ document.body.appendChild(bridgeFrame);
+}
+window.addEventListener('message',(event)=>{
+ // Only accept messages sent by the iframe created by this page.
+ if(!bridgeFrame || event.source!==bridgeFrame.contentWindow || !event.data || typeof event.data!=='object') return;
+ const msg=event.data;
+ if(msg.type==='TAIPEION_BRIDGE_READY'){
+  bridgeReady=true;
+  bridgeWaiters.splice(0).forEach(resolve=>resolve());
+  return;
+ }
+ if(msg.type==='TAIPEION_VOTE_RESULT' && bridgePending.has(msg.requestId)){
+  const pending=bridgePending.get(msg.requestId);
+  bridgePending.delete(msg.requestId);
+  clearTimeout(pending.timer);
+  if(msg.result && msg.result.ok===true) pending.resolve(msg.result);
+  else pending.reject(new Error((msg.result && msg.result.error)||'Apps Script 未確認寫入成功'));
+ }
+});
+function waitForBridge(){
+ ensureBridge();
+ if(bridgeReady) return Promise.resolve();
+ return new Promise((resolve,reject)=>{
+  const timeout=setTimeout(()=>reject(new Error('無法連線至 Apps Script 送出通道。請確認部署版本與網頁應用程式權限。')),25000);
+  bridgeWaiters.push(()=>{clearTimeout(timeout);resolve()});
+ });
+}
+function submitThroughBridge(payload){
+ return waitForBridge().then(()=>new Promise((resolve,reject)=>{
+  const requestId='vote-'+Date.now()+'-'+(++bridgeRequestId);
+  const timer=setTimeout(()=>{
+   bridgePending.delete(requestId);
+   reject(new Error('等待 Apps Script 回覆逾時。請檢查 Apps Script「執行項目」及試算表 ID。'));
+  },30000);
+  bridgePending.set(requestId,{resolve,reject,timer});
+  bridgeFrame.contentWindow.postMessage({type:'TAIPEION_VOTE_SUBMIT',requestId,payload},'*');
+ }));
+}
 async function submitSurvey(){
  if(sending||state.submitted)return;
  if(!state.votes.every(v=>v.length===3)){showToast('請確認三關都各選 3 個系統');return}
- sending=true;const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='☁️ 正在寫入試算表…';
- const payload={clientId:state.clientId,name:state.name.trim(),votes:state.votes.map(v=>v.slice()),experience:state.experience,submittedAt:new Date().toISOString()};
- const scriptURL='請貼上你的_GOOGLE_APPS_SCRIPT_WEB_APP_EXEC_URL';
- const onSuccess=(result)=>{
-  if(!result||result.ok!==true){onFailure(new Error(result?.error||'伺服器未確認儲存成功'));return}
-  state.submitted=true;state.receipt=result;state.step=4;save();sending=false;render();window.scrollTo({top:0,behavior:'smooth'});showToast(result.duplicate?'此份填答已存在，不重複計票':'✅ 已寫入 Google 試算表！');
+ sending=true;
+ const btn=document.getElementById('submitBtn');
+ btn.disabled=true;btn.textContent='☁️ 正在寫入試算表…';
+ const payload={
+  clientId:state.clientId,
+  name:state.name.trim(),
+  votes:state.votes.map(v=>v.slice()),
+  experience:state.experience,
+  submittedAt:new Date().toISOString()
  };
- const onFailure=(err)=>{
-  sending=false;const b=document.getElementById('submitBtn');
-  if(b){b.disabled=false;b.textContent='☁️ 重試送出'}
-  const msg=err?.message||String(err),note=document.getElementById('sendNote');
-  if(note)note.textContent='⚠️ 寫入結果無法確認：'+msg+'\n請至 Apps Script「執行項目」查看後端錯誤。若資料可能已寫入，請使用相同 clientId 去重後再重試。';
-  showToast('⚠️ 上傳失敗，請檢查 Apps Script 部署與網路');
- };
- // 建議將本 HTML 放在 Apps Script 專案的 index.html，由 HtmlService 提供。
- // 這時使用 google.script.run，不會遇到一般跨網域 fetch 的 CORS 讀取限制。
- if(window.google && google.script && google.script.run){
-  google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).submitVote(payload);
-  return;
- }
- // 若 HTML 放在其他網站，請設定 /exec 網址；Apps Script 的跨網域重新導向仍可能被瀏覽器封鎖。
- if(!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(scriptURL)){
-  onFailure(new Error('尚未設定 Apps Script 網址，或建議改由 Apps Script HtmlService 部署本頁。'));return;
- }
  try{
-  const response=await fetch(scriptURL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),redirect:'follow'});
-  const raw=await response.text();let result;
-  try{result=JSON.parse(raw)}catch(e){throw new Error('伺服器未回傳 JSON。請確認部署網址、doPost(e) 與存取權限。')}
-  if(!response.ok)throw new Error('HTTP '+response.status);
-  onSuccess(result);
- }catch(err){onFailure(err)}
+  const result=await submitThroughBridge(payload);
+  state.submitted=true;state.receipt=result;state.step=4;save();
+  sending=false;render();window.scrollTo({top:0,behavior:'smooth'});
+  showToast(result.duplicate?'此份填答已存在，不重複計票':'✅ 已確認寫入 Google 試算表！');
+ }catch(err){
+  sending=false;
+  const b=document.getElementById('submitBtn');
+  if(b){b.disabled=false;b.textContent='☁️ 重試送出'}
+  const note=document.getElementById('sendNote');
+  if(note)note.textContent='⚠️ 寫入失敗：'+(err&&err.message?err.message:String(err))+
+   '\n請確認 Apps Script 已重新部署為最新版本、SPREADSHEET_ID 已設定正確，並查看 Apps Script「執行項目」。';
+  showToast('⚠️ 寫入失敗，請依提示檢查設定');
+ }
 }
 document.getElementById('resetBtn').addEventListener('click',()=>{if(!confirm('確定清除本機填答並重新開始？已寫入試算表的資料不會刪除。'))return;localStorage.removeItem(STORAGE_KEY);state=newState();sending=false;render();showToast('已清除本機填答')});
 render();
