@@ -21,14 +21,14 @@ main{max-width:1000px;margin:0 auto;padding:12px 18px 48px}.hero{display:flex;al
   <div class="top-meta"><span class="tag-soft">🌷 同仁體驗互動小遊戲</span><button class="top-mini" id="resetBtn" type="button">↻ 清除並重來</button></div>
 </header>
 <nav class="portal-nav" aria-label="網站導覽">
-  <a href="index.html" target="_top" aria-current="page">🏠 首頁／三關投票</a>
-  <a href="Game.html" target="_top">🐻 公務情境闖關</a>
-  <a href="system.html" target="_top" id="guideLink">📘 公文操作（system.html）</a>
+  <a href="?" target="_top" aria-current="page">🏠 首頁／三關投票</a>
+  <a href="https://s1150214.github.io/civil/Game.html" target="_top">🐻 公務情境闖關</a>
+  <a href="https://s1150214.github.io/civil/system.html" target="_top" id="guideLink">📘 公文操作（system.html）</a>
 </nav>
 <main>
 <section class="hero"><div><span class="eyebrow">⭐ 你的公務系統探險地圖</span><h1>公務小達人 <span>♡</span><br>三關人氣投票！</h1><p>哪些 TAIPEION 系統是你覺得教研中心同仁會用到的呢？<br>依序完成 <b>共通性 → 一條鞭 → 跨機關</b>，每關選出 3 個系統，再盤點自己曾接觸或使用過的系統。</p></div><div class="mascot" aria-hidden="true">🐻✨</div></section>
 <section class="panel" id="app" aria-live="polite"></section>
-<footer><a href="index.html" target="_top">🏠 回首頁</a>　｜　<a href="system.html" target="_top">📘 進入公文操作</a><br>同仁體驗互動小遊戲｜請勿輸入密碼或其他敏感個人資料。</footer>
+<footer><a href="?" target="_top">🏠 回首頁</a>　｜　<a href="https://s1150214.github.io/civil/system.html" target="_top">📘 進入公文操作</a><br>同仁體驗互動小遊戲｜請勿輸入密碼或其他敏感個人資料。</footer>
 </main>
 <div class="toast" id="toast" role="status"></div>
 <script>
@@ -89,58 +89,19 @@ function render(){
  const submit=document.getElementById('submitBtn');if(submit)submit.addEventListener('click',submitSurvey);
 }
 function renderDone(){app.innerHTML=`<div class="summary"><h2>🎉 填答已完成！</h2><p>收據編號：<b>${esc(state.receipt?.receiptId||'已保存')}</b></p><p>你的投票已在本機標記為完成。若要開始新一份填答，請按右上方「清除並重來」。</p><button class="secondary" id="receiptBtn">查看送出摘要</button><pre id="receipt" style="white-space:pre-wrap;display:none"></pre></div>`;document.getElementById('receiptBtn').onclick=()=>{const p=document.getElementById('receipt');p.style.display=p.style.display==='none'?'block':'none';p.textContent=JSON.stringify({name:state.name,votes:state.votes,experience:state.experience,receipt:state.receipt},null,2)}}
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYB5NWNJQVgxVwXlIV43EqkEs4mhuIHeC7OcnLLNKq9SHqwVS_7b_LZe3dsvSCOoalvw/exec';
-const GITHUB_ORIGIN = 'https://s1150214.github.io';
-let bridgeReady = false;
-let bridgeWaiters = [];
-let bridgeFrame = null;
-let bridgeRequestId = 0;
-const bridgePending = new Map();
 
-function ensureBridge(){
- if(bridgeFrame) return;
- bridgeFrame=document.createElement('iframe');
- bridgeFrame.title='Google Apps Script 安全送出通道';
- bridgeFrame.setAttribute('aria-hidden','true');
- bridgeFrame.style.cssText='position:fixed;width:1px;height:1px;left:-10px;bottom:0;border:0;opacity:0;pointer-events:none';
- bridgeFrame.src=SCRIPT_URL+'?bridge=1';
- document.body.appendChild(bridgeFrame);
-}
-window.addEventListener('message',(event)=>{
- // Only accept messages sent by the iframe created by this page.
- if(!bridgeFrame || event.source!==bridgeFrame.contentWindow || !event.data || typeof event.data!=='object') return;
- const msg=event.data;
- if(msg.type==='TAIPEION_BRIDGE_READY'){
-  bridgeReady=true;
-  bridgeWaiters.splice(0).forEach(resolve=>resolve());
-  return;
- }
- if(msg.type==='TAIPEION_VOTE_RESULT' && bridgePending.has(msg.requestId)){
-  const pending=bridgePending.get(msg.requestId);
-  bridgePending.delete(msg.requestId);
-  clearTimeout(pending.timer);
-  if(msg.result && msg.result.ok===true) pending.resolve(msg.result);
-  else pending.reject(new Error((msg.result && msg.result.error)||'Apps Script 未確認寫入成功'));
- }
-});
-function waitForBridge(){
- ensureBridge();
- if(bridgeReady) return Promise.resolve();
+function submitVoteToServer(payload){
  return new Promise((resolve,reject)=>{
-  const timeout=setTimeout(()=>reject(new Error('無法連線至 Apps Script 送出通道。請確認部署版本與網頁應用程式權限。')),25000);
-  bridgeWaiters.push(()=>{clearTimeout(timeout);resolve()});
+  google.script.run
+   .withSuccessHandler(result=>{
+    if(result && result.ok===true) resolve(result);
+    else reject(new Error((result && result.error) || 'Apps Script 未確認寫入成功'));
+   })
+   .withFailureHandler(err=>{
+    reject(new Error(err && err.message ? err.message : String(err || 'Apps Script 執行失敗')));
+   })
+   .submitVote(payload);
  });
-}
-function submitThroughBridge(payload){
- return waitForBridge().then(()=>new Promise((resolve,reject)=>{
-  const requestId='vote-'+Date.now()+'-'+(++bridgeRequestId);
-  const timer=setTimeout(()=>{
-   bridgePending.delete(requestId);
-   reject(new Error('等待 Apps Script 回覆逾時。請檢查 Apps Script「執行項目」及試算表 ID。'));
-  },30000);
-  bridgePending.set(requestId,{resolve,reject,timer});
-  bridgeFrame.contentWindow.postMessage({type:'TAIPEION_VOTE_SUBMIT',requestId,payload},'*');
- }));
 }
 async function submitSurvey(){
  if(sending||state.submitted)return;
@@ -156,7 +117,7 @@ async function submitSurvey(){
   submittedAt:new Date().toISOString()
  };
  try{
-  const result=await submitThroughBridge(payload);
+  const result=await submitVoteToServer(payload);
   state.submitted=true;state.receipt=result;state.step=4;save();
   sending=false;render();window.scrollTo({top:0,behavior:'smooth'});
   showToast(result.duplicate?'此份填答已存在，不重複計票':'✅ 已確認寫入 Google 試算表！');
@@ -166,7 +127,7 @@ async function submitSurvey(){
   if(b){b.disabled=false;b.textContent='☁️ 重試送出'}
   const note=document.getElementById('sendNote');
   if(note)note.textContent='⚠️ 寫入失敗：'+(err&&err.message?err.message:String(err))+
-   '\n請確認 Apps Script 已重新部署為最新版本、SPREADSHEET_ID 已設定正確，並查看 Apps Script「執行項目」。';
+   '\n請確認 Apps Script 已重新部署為最新版本、SPREADSHEET_ID 與試算表權限正確，並查看 Apps Script「執行項目」。';
   showToast('⚠️ 寫入失敗，請依提示檢查設定');
  }
 }
