@@ -89,102 +89,116 @@ function render(){
  const submit=document.getElementById('submitBtn');if(submit)submit.addEventListener('click',submitSurvey);
 }
 function renderDone(){app.innerHTML=`<div class="summary"><h2>🎉 填答已完成！</h2><p>收據編號：<b>${esc(state.receipt?.receiptId||'已保存')}</b></p><p>你的投票已在本機標記為完成。若要開始新一份填答，請按右上方「清除並重來」。</p><button class="secondary" id="receiptBtn">查看送出摘要</button><pre id="receipt" style="white-space:pre-wrap;display:none"></pre></div>`;document.getElementById('receiptBtn').onclick=()=>{const p=document.getElementById('receipt');p.style.display=p.style.display==='none'?'block':'none';p.textContent=JSON.stringify({name:state.name,votes:state.votes,experience:state.experience,receipt:state.receipt},null,2)}}
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyG8VX3RsFaHGvO_cHIIaPziiKNPFj2WnH3c8BE217OaXf8LzHyjTrFo2dm0_sSAkV0-Q/exec';
-const GITHUB_ORIGIN = 'https://s1150214.github.io';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMH60yN3T6HnJ8Eaz8hceKooh8_-kKMYyEFThovKUBfZwFtQKgxpRpmZBderCZ93VEow/exec';
+const EXPECTED_PARENT_ORIGIN = 'https://s1150214.github.io';
 
-let submitSeq = 0;
-const submitPending = new Map();
+let bridgeReady = false;
+let bridgeFrame = null;
+let bridgeSeq = 0;
+const bridgePending = new Map();
 
-/**
- * GitHub Pages -> Apps Script 可靠送出通道
- *
- * 作法：
- * 1. 動態建立隱藏 iframe。
- * 2. 以一般 HTML form POST 到 Apps Script /exec，避開 fetch/CORS。
- * 3. Apps Script doPost() 寫入試算表後回傳一個極小 HTML。
- * 4. 該 HTML 用 window.parent.postMessage() 把「真正寫入結果」傳回 GitHub。
- *
- * 不需要 bridge.html。
- */
-function submitVoteDirect(payload){
- return new Promise((resolve,reject)=>{
-  const requestId='vote-'+Date.now()+'-'+(++submitSeq);
-  const frameName='voteFrame_'+submitSeq;
+function ensureBridge() {
+  return new Promise((resolve, reject) => {
+    if (bridgeReady && bridgeFrame && bridgeFrame.contentWindow) {
+      resolve();
+      return;
+    }
 
-  const iframe=document.createElement('iframe');
-  iframe.name=frameName;
-  iframe.title='Google Apps Script 寫入結果通道';
-  iframe.setAttribute('aria-hidden','true');
-  iframe.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;border:0;opacity:0;pointer-events:none';
+    if (!bridgeFrame) {
+      bridgeFrame = document.createElement('iframe');
+      bridgeFrame.id = 'appsScriptBridge';
+      bridgeFrame.title = 'Apps Script 寫入通道';
+      bridgeFrame.setAttribute('aria-hidden', 'true');
+      bridgeFrame.style.cssText =
+        'position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;' +
+        'border:0;opacity:0;pointer-events:none;';
+      bridgeFrame.src =
+        SCRIPT_URL + '?mode=bridge&parent=' +
+        encodeURIComponent(window.location.origin);
+      document.body.appendChild(bridgeFrame);
+    }
 
-  const form=document.createElement('form');
-  form.method='POST';
-  form.action=SCRIPT_URL;
-  form.target=frameName;
-  form.style.display='none';
-  form.acceptCharset='UTF-8';
-
-  const payloadInput=document.createElement('input');
-  payloadInput.type='hidden';
-  payloadInput.name='payload';
-  payloadInput.value=JSON.stringify(payload);
-
-  const requestInput=document.createElement('input');
-  requestInput.type='hidden';
-  requestInput.name='requestId';
-  requestInput.value=requestId;
-
-  form.append(payloadInput,requestInput);
-  document.body.append(iframe,form);
-
-  const cleanup=()=>{
-   const pending=submitPending.get(requestId);
-   if(pending && pending.timer) clearTimeout(pending.timer);
-   submitPending.delete(requestId);
-   form.remove();
-   // 稍微延後移除 iframe，避免某些瀏覽器在訊息傳回瞬間中斷 navigation cleanup。
-   setTimeout(()=>iframe.remove(),300);
-  };
-
-  const timer=setTimeout(()=>{
-   cleanup();
-   reject(new Error(
-    '等待 Apps Script 回覆逾時。請確認網頁應用程式已部署為最新版本，且存取權限允許目前使用者。'
-   ));
-  },35000);
-
-  submitPending.set(requestId,{resolve,reject,timer,iframe,cleanup});
-  form.submit();
- });
+    const started = Date.now();
+    const timer = setInterval(() => {
+      if (bridgeReady) {
+        clearInterval(timer);
+        resolve();
+      } else if (Date.now() - started > 20000) {
+        clearInterval(timer);
+        reject(new Error(
+          '無法建立 Apps Script 寫入通道。請確認 Apps Script 已部署最新版本，且網頁應用程式存取權限允許目前使用者。'
+        ));
+      }
+    }, 100);
+  });
 }
 
-window.addEventListener('message',(event)=>{
- const msg=event.data;
- if(!msg || typeof msg!=='object' || msg.type!=='TAIPEION_VOTE_RESULT') return;
- const requestId=msg.requestId;
- if(!requestId || !submitPending.has(requestId)) return;
+window.addEventListener('message', event => {
+  const msg = event.data;
+  if (!msg || typeof msg !== 'object') return;
 
- const pending=submitPending.get(requestId);
+  if (
+    msg.type === 'TAIPEION_BRIDGE_READY' &&
+    bridgeFrame &&
+    event.source === bridgeFrame.contentWindow
+  ) {
+    bridgeReady = true;
+    return;
+  }
 
- // 只接受由該次送出所建立的 iframe 傳回的訊息。
- if(event.source!==pending.iframe.contentWindow) return;
+  if (
+    msg.type === 'TAIPEION_VOTE_RESULT' &&
+    bridgeFrame &&
+    event.source === bridgeFrame.contentWindow
+  ) {
+    const pending = bridgePending.get(msg.requestId);
+    if (!pending) return;
 
- pending.cleanup();
+    clearTimeout(pending.timer);
+    bridgePending.delete(msg.requestId);
 
- if(msg.result && msg.result.ok===true){
-  pending.resolve(msg.result);
- }else{
-  pending.reject(new Error(
-   (msg.result && msg.result.error) || 'Apps Script 未確認寫入成功'
-  ));
- }
+    if (msg.result && msg.result.ok === true) {
+      pending.resolve(msg.result);
+    } else {
+      pending.reject(new Error(
+        (msg.result && msg.result.error) || 'Apps Script 未確認寫入成功'
+      ));
+    }
+  }
 });
+
+async function submitVoteReliable(payload) {
+  await ensureBridge();
+
+  return new Promise((resolve, reject) => {
+    const requestId = 'vote-' + Date.now() + '-' + (++bridgeSeq);
+
+    const timer = setTimeout(() => {
+      bridgePending.delete(requestId);
+      reject(new Error(
+        'Apps Script 已連線，但等待寫入結果逾時。請先查看試算表是否已有該筆資料，再決定是否重送。'
+      ));
+    }, 30000);
+
+    bridgePending.set(requestId, {resolve, reject, timer});
+
+    bridgeFrame.contentWindow.postMessage(
+      {
+        type: 'TAIPEION_SUBMIT_VOTE',
+        requestId: requestId,
+        payload: payload
+      },
+      '*'
+    );
+  });
+}
+
 async function submitSurvey(){
  if(sending||state.submitted)return;
  if(!state.votes.every(v=>v.length===3)){showToast('請確認三關都各選 3 個系統');return}
  sending=true;
  const btn=document.getElementById('submitBtn');
- btn.disabled=true;btn.textContent='☁️ 正在寫入試算表…';
+ btn.disabled=true;btn.textContent='☁️ 正在寫入…';
  const payload={
   clientId:state.clientId,
   name:state.name.trim(),
@@ -193,17 +207,17 @@ async function submitSurvey(){
   submittedAt:new Date().toISOString()
  };
  try{
-  const result=await submitVoteDirect(payload);
+  const result=await submitVoteReliable(payload);
   state.submitted=true;state.receipt=result;state.step=4;save();
   sending=false;render();window.scrollTo({top:0,behavior:'smooth'});
-  showToast(result.duplicate?'此份填答已存在，不重複計票':'✅ 已確認寫入 Google 試算表！');
+  showToast(result.duplicate?'✅ 此份填答已存在，不重複計票':'✅ 送出成功，已寫入 Google 試算表！');
  }catch(err){
   sending=false;
   const b=document.getElementById('submitBtn');
   if(b){b.disabled=false;b.textContent='☁️ 重試送出'}
   const note=document.getElementById('sendNote');
   if(note)note.textContent='⚠️ 寫入失敗：'+(err&&err.message?err.message:String(err))+
-   '\n請確認 Apps Script 已重新部署為最新版本、網頁應用程式存取權限與 SPREADSHEET_ID 正確，並查看 Apps Script「執行項目」。';
+   '\n請確認 Apps Script 已重新部署為最新版本、SPREADSHEET_ID 已設定正確，並查看 Apps Script「執行項目」。';
   showToast('⚠️ 寫入失敗，請依提示檢查設定');
  }
 }
