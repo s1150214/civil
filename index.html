@@ -89,7 +89,7 @@ function render(){
  const submit=document.getElementById('submitBtn');if(submit)submit.addEventListener('click',submitSurvey);
 }
 function renderDone(){app.innerHTML=`<div class="summary"><h2>🎉 填答已完成！</h2><p>收據編號：<b>${esc(state.receipt?.receiptId||'已保存')}</b></p><p>你的投票已在本機標記為完成。若要開始新一份填答，請按右上方「清除並重來」。</p><button class="secondary" id="receiptBtn">查看送出摘要</button><pre id="receipt" style="white-space:pre-wrap;display:none"></pre></div>`;document.getElementById('receiptBtn').onclick=()=>{const p=document.getElementById('receipt');p.style.display=p.style.display==='none'?'block':'none';p.textContent=JSON.stringify({name:state.name,votes:state.votes,experience:state.experience,receipt:state.receipt},null,2)}}
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMH60yN3T6HnJ8Eaz8hceKooh8_-kKMYyEFThovKUBfZwFtQKgxpRpmZBderCZ93VEow/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyG8VX3RsFaHGvO_cHIIaPziiKNPFj2WnH3c8BE217OaXf8LzHyjTrFo2dm0_sSAkV0-Q/exec';
 const EXPECTED_PARENT_ORIGIN = 'https://s1150214.github.io';
 
 let bridgeReady = false;
